@@ -1,0 +1,88 @@
+Pregunta 1.-
+
+select 
+	p.nombre,
+	sum(monto) as "Total Venta" 
+from personas p 
+inner join ventas v on p.id  = v.id_persona 
+group by  p.nombre ;
+
+Pregunta 2.-
+
+select 
+	a.area, sum(v.monto) as 'Montos', v.periodo
+from personas p 
+inner join ventas v on p.id  = v.id_persona
+inner join roles r on p.id_rol = r.id
+inner join areas a on r.id_area  = a.id
+group by v.periodo, a.area;
+
+Pregunta 3.-
+
+select 
+	a.area,
+	p.nombre,
+	v.periodo,
+	
+	v.monto
+from personas p 
+inner join ventas v on p.id  = v.id_persona
+inner join roles r on p.id_rol = r.id
+inner join areas a on r.id_area  = a.id;
+
+Pregunta 4.-
+
+select 
+p.nombre,
+rol,
+a.area
+from personas p 
+left join ventas v on p.id  = v.id_persona
+left join roles r on p.id_rol = r.id
+left join areas a on r.id_area  = a.id
+where r.rol = "SUPERVISOR";
+
+Pregunta 5.-
+
+select * from 
+(select 
+	a.area,
+	sum(monto) as "Total Venta"
+from personas p
+inner join ventas v on p.id  = v.id_persona
+left join roles r on p.id_rol = r.id
+left join areas a on r.id_area  = a.id
+where a.area = 'VENTAS'  and (v.periodo= '201801' or  v.periodo= '201802')
+group by  a.area 
+union all
+select 
+	a.area,
+	sum(monto) as "Total Venta"
+from personas p
+inner join ventas v on p.id  = v.id_persona
+left join roles r on p.id_rol = r.id
+left join areas a on r.id_area  = a.id
+where a.area = 'remoto'  and (v.periodo= '201801' or  v.periodo= '201802')
+group by  a.area
+union all
+select 'Resta' , ABS((select 
+
+	sum(monto) as "Total Venta"
+from personas p
+inner join ventas v on p.id  = v.id_persona
+left join roles r on p.id_rol = r.id
+left join areas a on r.id_area  = a.id
+where a.area = 'remoto'  and (v.periodo= '201801' or  v.periodo= '201802')
+group by  a.area)-(select 
+
+	sum(monto) as "Total Venta"
+from personas p
+inner join ventas v on p.id  = v.id_persona
+left join roles r on p.id_rol = r.id
+left join areas a on r.id_area  = a.id
+where a.area = 'VENTAS'  and (v.periodo= '201801' or  v.periodo= '201802')
+group by  a.area))
+)
+as tabla
+
+;
